@@ -15,6 +15,7 @@ try{var _s=JSON.parse(localStorage.getItem('kinkjars-v1')||'null');if(_s&&_s.lan
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=Oswald:wght@500;600;700&family=Permanent+Marker&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/lz-string@1.5.0/libs/lz-string.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
 <style>
   :root{--c:#e63946;--on-c:#fff;--ink:#1d1a17;--bg:#fbf6ef;--card:#fff;--muted:#6b625a;--line:#e9e0d5;--font-body:'Nunito',system-ui,sans-serif;--font-display:'Oswald','Arial Narrow',sans-serif}
   html[lang=fa]{--font-body:'Vazirmatn',system-ui,sans-serif;--font-display:'Vazirmatn',sans-serif}
@@ -56,13 +57,11 @@ try{var _s=JSON.parse(localStorage.getItem('kinkjars-v1')||'null');if(_s&&_s.lan
   body.view-mode #reset{display:none}
   body.view-mode #fillOwnBtn{display:block}
   body.view-mode .poster-overlay .hot{pointer-events:none}
-  /* in view mode only: hide header text, share button, privacy text */
   body.view-mode header,
   body.view-mode #shareBtn,
   body.view-mode #copyHint,
   body.view-mode .small-links span[data-i18n="privacy"]{display:none !important}
 
-  /* view mode: full-screen centered result */
   body.view-mode .layout{display:block}
   body.view-mode main{display:none}
   body.view-mode aside.side{
@@ -165,11 +164,19 @@ try{var _s=JSON.parse(localStorage.getItem('kinkjars-v1')||'null');if(_s&&_s.lan
   .poster-overlay .hot:hover{background:rgba(230,57,70,.07)}
   .poster-overlay .hot:focus-visible{outline:3px solid var(--ink);outline-offset:2px;background:rgba(230,57,70,.07)}
 
-  .big{display:block;width:100%;margin-top:16px;padding:18px 20px;border-radius:18px;border:3px solid var(--ink);background:var(--c);color:var(--on-c);font-family:var(--font-display);font-weight:700;font-size:26px;letter-spacing:.02em;box-shadow:0 5px 0 var(--ink)}
+  .big{display:block;width:100%;margin-top:16px;padding:18px 20px;border-radius:18px;border:3px solid var(--ink);background:var(--c);color:var(--on-c);font-family:var(--font-display);font-weight:700;font-size:26px;letter-spacing:.02em;box-shadow:0 5px 0 var(--ink);position:relative}
   html[lang=fa] .big{font-size:22px;letter-spacing:0}
   .big:active{transform:translateY(3px);box-shadow:0 2px 0 var(--ink)}
   .big.secondary{background:#fff;color:var(--ink);margin-top:10px}
   .big.secondary:hover{background:var(--bg)}
+
+  /* share button with QR inside */
+  #shareBtn{display:flex;align-items:center;justify-content:center;gap:12px;min-height:60px;padding:14px 20px}
+  #shareBtn .share-label{flex:1;text-align:center}
+  #shareBtn .qr-mini{display:none;width:64px;height:64px;background:#fff;border-radius:10px;padding:4px;flex-shrink:0;border:2px solid var(--ink);cursor:pointer;transition:transform .15s}
+  #shareBtn .qr-mini:hover{transform:scale(1.06)}
+  #shareBtn.has-qr .qr-mini{display:block}
+  #shareBtn .qr-mini canvas{width:100%;height:100%;display:block;image-rendering:pixelated}
 
   #fillOwnBtn{display:none;margin-top:10px}
 
@@ -227,6 +234,21 @@ try{var _s=JSON.parse(localStorage.getItem('kinkjars-v1')||'null');if(_s&&_s.lan
   .sheet img{width:100%;border-radius:10px;border:2px solid var(--line)}
   .sheet .support-card{margin-top:16px;border-top:0;padding-top:0}
 
+  /* QR modal */
+  #qrModal{position:fixed;inset:0;background:rgba(20,16,12,.6);display:flex;align-items:center;justify-content:center;padding:16px;z-index:12}
+  #qrModal[hidden]{display:none}
+  .qr-sheet{background:#fff;border-radius:22px;padding:24px;max-width:420px;width:100%;max-height:92vh;overflow:auto;text-align:center}
+  .qr-sheet h3{font-family:var(--font-display);font-size:24px;margin:0 0 6px}
+  html[lang=fa] .qr-sheet h3{font-size:22px}
+  .qr-sheet p{color:var(--muted);margin:0 0 16px;font-size:15px}
+  .qr-sheet .qr-box{
+    background:#fff;border:2px solid var(--line);border-radius:16px;
+    padding:16px;display:inline-block;margin:0 auto 16px;
+  }
+  .qr-sheet .qr-box canvas{display:block;width:280px;height:280px;max-width:100%;height:auto;image-rendering:pixelated}
+  .qr-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+  .qr-actions .big{margin-top:0;width:auto;padding:12px 22px;font-size:18px}
+
   #errorModal{position:fixed;inset:0;background:rgba(20,16,12,.6);display:flex;align-items:center;justify-content:center;padding:16px;z-index:11}
   #errorModal[hidden]{display:none}
   .error-sheet{background:#fff;border-radius:22px;padding:24px;max-width:400px;width:100%;text-align:center}
@@ -240,6 +262,7 @@ try{var _s=JSON.parse(localStorage.getItem('kinkjars-v1')||'null');if(_s&&_s.lan
     .lvl i{height:3px}
     .scale button{height:46px;font-size:19px}
     .small-links{justify-content:center;gap:8px}
+    #shareBtn .qr-mini{width:52px;height:52px}
   }
 </style>
 </head>
@@ -307,7 +330,10 @@ try{var _s=JSON.parse(localStorage.getItem('kinkjars-v1')||'null');if(_s&&_s.lan
           <div class="poster-overlay" id="posterOverlay" role="group" aria-label="پرش به کینک"></div>
         </div>
         <button class="big" id="save" type="button" data-i18n="saveBtn">ذخیره شیشه‌ها</button>
-        <button class="big secondary" id="shareBtn" type="button" data-i18n="shareBtn">کپی لینک اشتراک‌گذاری</button>
+        <button class="big secondary" id="shareBtn" type="button">
+          <span class="share-label" data-i18n="shareBtn">کپی لینک اشتراک‌گذاری</span>
+          <span class="qr-mini" id="qrMini" aria-hidden="true"><canvas id="qrMiniCanvas"></canvas></span>
+        </button>
         <div class="copy-hint" id="copyHint"></div>
         <button class="big secondary" id="fillOwnBtn" type="button" data-i18n="fillOwnBtn">شیشه‌های خودت رو پر کن</button>
 
@@ -353,6 +379,18 @@ try{var _s=JSON.parse(localStorage.getItem('kinkjars-v1')||'null');if(_s&&_s.lan
         <span class="sc-sub" data-i18n="supportHint">سؤالی داری؟ پیام بده</span>
       </span>
     </a>
+  </div>
+</div>
+
+<div id="qrModal" hidden role="dialog" aria-modal="true">
+  <div class="qr-sheet">
+    <h3 data-i18n="qrTitle">کد QR اشتراک‌گذاری</h3>
+    <p data-i18n="qrHint">با دوربین گوشی اسکن کن تا خروجی باز بشه.</p>
+    <div class="qr-box"><canvas id="qrBigCanvas"></canvas></div>
+    <div class="qr-actions">
+      <button class="big" id="qrDownload" type="button" data-i18n="qrDownload">دانلود QR</button>
+      <button class="big secondary" id="qrClose" type="button" data-i18n="done">تمومه</button>
+    </div>
   </div>
 </div>
 
@@ -427,7 +465,7 @@ const I18N = {
     aLittle: "کم", overflowing: "لبریز",
     yourJars: "شیشه‌هات",
     saveBtn: "ذخیره شیشه‌ها",
-    shareBtn: "ساخت لینک اشتراک‌گذاری",
+    shareBtn: "کپی لینک اشتراک‌گذاری",
     fillOwnBtn: "شیشه‌های خودت رو پر کن",
     copyOk: "لینک کپی شد!",
     copyErr: "کپی نشد — لینک را دستی کپی کن",
@@ -444,6 +482,10 @@ const I18N = {
     langBtn: "English",
     backTop: "برگشت به بالا",
     jumpTo: label => `برو به ${label}`,
+    qrTitle: "کد QR اشتراک‌گذاری",
+    qrHint: "با دوربین گوشی اسکن کن تا خروجی باز بشه.",
+    qrDownload: "دانلود QR",
+    qrAria: "کد QR برای لینک اشتراک‌گذاری",
     viewBanner: (name) => name
       ? `در حال مشاهدهٔ شیشه‌های کینک <strong>${escapeHtml(name)}</strong>. این صفحه فقط برای دیدن است.`
       : `در حال مشاهدهٔ یک مجموعهٔ اشتراکی. این صفحه فقط برای دیدن است.`,
@@ -472,7 +514,7 @@ const I18N = {
     aLittle: "a little", overflowing: "overflowing",
     yourJars: "Your jars",
     saveBtn: "Save my jars",
-    shareBtn: "Create share link",
+    shareBtn: "Copy share link",
     fillOwnBtn: "Fill your own jars",
     copyOk: "Link copied!",
     copyErr: "Copy failed — copy the link manually",
@@ -489,6 +531,10 @@ const I18N = {
     langBtn: "فارسی",
     backTop: "Back to top",
     jumpTo: label => `Jump to ${label}`,
+    qrTitle: "Share QR code",
+    qrHint: "Scan with your phone camera to open the result.",
+    qrDownload: "Download QR",
+    qrAria: "QR code for the share link",
     viewBanner: (name) => name
       ? `Viewing <strong>${escapeHtml(name)}</strong>'s kink jars. This page is read-only.`
       : `Viewing a shared set of jars. This page is read-only.`,
@@ -512,6 +558,7 @@ function escapeHtml(s) {
 
 let state = { name: "", age: null, color: "#e63946", answers: JARS.map(() => 0), lang: "fa" };
 let isViewMode = false;
+let currentShareUrl = "";
 
 function encodeShare(s) {
   const payload = { v: SHARE_VERSION, n: s.name, a: s.age || "", c: s.color, l: s.lang, d: s.answers.join("") };
@@ -834,6 +881,43 @@ function drawMini(canvas, idx, level, rgb) {
   drawJar(c, idx, level, rgb);
 }
 
+/* ===== QR helpers ===== */
+function makeQRCanvas(canvas, text, pixels) {
+  if (typeof qrcode === "undefined") return false;
+  const qr = qrcode(0, "M");
+  qr.addData(text);
+  qr.make();
+  const count = qr.getModuleCount();
+  const cell = Math.max(2, Math.floor(pixels / count));
+  const size = cell * count;
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext("2d");
+  ctx.fillStyle = "#fff";
+  ctx.fillRect(0, 0, size, size);
+  ctx.fillStyle = "#151311";
+  for (let row = 0; row < count; row++) {
+    for (let col = 0; col < count; col++) {
+      if (qr.isDark(row, col)) {
+        ctx.fillRect(col * cell, row * cell, cell, cell);
+      }
+    }
+  }
+  return true;
+}
+
+function drawQrMini() {
+  if (!currentShareUrl) return;
+  const c = document.getElementById("qrMiniCanvas");
+  makeQRCanvas(c, currentShareUrl, 128);
+}
+
+function drawQrBig() {
+  if (!currentShareUrl) return;
+  const c = document.getElementById("qrBigCanvas");
+  makeQRCanvas(c, currentShareUrl, 560);
+}
+
 /* ===== UI ===== */
 const $ = id => document.getElementById(id);
 const qWrap = $("questions");
@@ -842,6 +926,8 @@ const overlay = $("posterOverlay");
 const ageScale = $("ageScale");
 const ageSkip = $("ageSkip");
 const copyHint = $("copyHint");
+const shareBtn = $("shareBtn");
+const qrMini = $("qrMini");
 let minis = [];
 let qEls = [];
 
@@ -969,6 +1055,8 @@ function applyLang() {
   $("poster").setAttribute("aria-label", lang === "fa" ? "پیش‌نمایش شیشه‌های پر شده" : "Preview of your filled jars");
   $("modalImg").setAttribute("alt", lang === "fa" ? "شیشه‌های پر شده تو" : "Your filled jars");
   overlay.setAttribute("aria-label", lang === "fa" ? "پرش به کینک" : "Jump to a kink");
+  qrMini.setAttribute("aria-label", t.qrAria);
+  qrMini.setAttribute("title", t.qrTitle);
   sw.querySelectorAll(".sw").forEach(b => {
     b.setAttribute("aria-label", (lang === "fa" ? "رنگ " : "Color ") + b.dataset.hex);
   });
@@ -1152,9 +1240,35 @@ async function doShare() {
   const code = encodeShare(state);
   if (!code) { showCopyHint(t.copyErr, "err"); return; }
   const url = location.origin + location.pathname + "?r=" + code;
+  currentShareUrl = url;
   const ok = await copyText(url);
   showCopyHint(ok ? t.copyOk : t.copyErr, ok ? "ok" : "err");
+  // reveal mini QR inside the button
+  drawQrMini();
+  shareBtn.classList.add("has-qr");
 }
+
+qrMini.addEventListener("click", (e) => {
+  e.stopPropagation();
+  if (!currentShareUrl) return;
+  drawQrBig();
+  $("qrModal").hidden = false;
+});
+
+$("qrClose").addEventListener("click", () => { $("qrModal").hidden = true; });
+$("qrModal").addEventListener("click", (e) => { if (e.target.id === "qrModal") $("qrModal").hidden = true; });
+
+$("qrDownload").addEventListener("click", () => {
+  const c = document.getElementById("qrBigCanvas");
+  if (!c || !c.width) return;
+  c.toBlob((blob) => {
+    if (!blob) return;
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = "kink-jars-qr.png";
+    document.body.appendChild(a); a.click(); a.remove();
+  }, "image/png");
+});
 
 if (shareError) {
   document.body.style.overflow = "hidden";
@@ -1168,7 +1282,11 @@ if (shareError) {
     if (t[key] !== undefined) el.innerHTML = t[key];
   });
 } else {
-  $("shareBtn").onclick = doShare;
+  shareBtn.addEventListener("click", (e) => {
+    // if click landed on the mini QR, handled by its own listener
+    if (e.target.closest(".qr-mini")) return;
+    doShare();
+  });
   $("fillOwnBtn").onclick = () => { location.href = location.pathname; };
   $("save").onclick = save;
   $("saveBar").onclick = save;
@@ -1180,6 +1298,8 @@ if (shareError) {
     state.name = "";
     state.age = null;
     $("name").value = "";
+    shareBtn.classList.remove("has-qr");
+    currentShareUrl = "";
     persist(); syncAge(); update();
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
