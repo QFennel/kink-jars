@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>شیشه‌های کینک فارسی</title>
+<title>شیشه‌های کینک من</title>
 <meta name="description" content="شیشه‌هات رو پر کن، رنگت رو انتخاب کن، عکست رو ذخیره کن.">
 <meta property="og:title" content="Kink Jars">
-<meta property="og:description" content="«شیشه‌ها کیکنت رو پر کن، رنگت رو انتخاب کن، عکست رو ذخیره کن و به اشتراک بگذار.»">
+<meta property="og:description" content="شیشه‌هات رو پر کن، رنگت رو انتخاب کن، عکست رو ذخیره کن و به اشتراک بگذار.">
 <meta name="robots" content="noindex">
 <script>
 try{var _s=JSON.parse(localStorage.getItem('kinkjars-v1')||'null');if(_s&&_s.lang==='en'){document.documentElement.lang='en';document.documentElement.dir='ltr';}}catch(e){}
@@ -24,9 +24,23 @@ try{var _s=JSON.parse(localStorage.getItem('kinkjars-v1')||'null');if(_s&&_s.lan
   @media(min-width:960px){body{padding-bottom:40px}}
   .wrap{max-width:1180px;margin:0 auto;padding:28px 16px}
 
-  .lang-toggle{position:fixed;top:14px;inset-inline-end:14px;z-index:50;background:#fff;border:2px solid var(--ink);border-radius:999px;padding:6px 16px;font:inherit;font-family:var(--font-body);font-weight:700;font-size:15px;cursor:pointer;box-shadow:0 2px 0 var(--ink);color:var(--ink);transition:background .15s,transform .05s}
+  /* language toggle: static on mobile (top of page), fixed on desktop */
+  .lang-toggle{
+    display:inline-block;
+    margin:10px 16px 0;
+    background:#fff;border:2px solid var(--ink);border-radius:999px;
+    padding:6px 16px;font:inherit;font-family:var(--font-body);font-weight:700;font-size:15px;
+    cursor:pointer;box-shadow:0 2px 0 var(--ink);color:var(--ink);
+    transition:background .15s,transform .05s;
+  }
   .lang-toggle:hover{background:var(--bg)}
   .lang-toggle:active{transform:translateY(1px);box-shadow:0 1px 0 var(--ink)}
+  @media(min-width:960px){
+    .lang-toggle{position:fixed;top:14px;inset-inline-end:14px;z-index:50;margin:0}
+  }
+  @media(max-width:959px){
+    .wrap{padding-top:8px}
+  }
 
   header{margin-bottom:22px}
   header h1{font-family:var(--font-display);font-weight:700;font-size:clamp(44px,9vw,68px);margin:0;line-height:1.05}
@@ -39,16 +53,11 @@ try{var _s=JSON.parse(localStorage.getItem('kinkjars-v1')||'null');if(_s&&_s.lan
   @media(min-width:960px){
     .layout{grid-template-columns:minmax(0,1fr) 430px}
     .side{
-      position:sticky;
-      top:20px;
-      align-self:start;
+      position:sticky;top:20px;align-self:start;
       max-height:calc(100vh - 40px);
-      overflow-y:auto;
-      overflow-x:hidden;
-      scrollbar-width:thin;
-      scrollbar-color:var(--line) transparent;
-      padding-inline-end:4px;
-      border-radius:22px;
+      overflow-y:auto;overflow-x:hidden;
+      scrollbar-width:thin;scrollbar-color:var(--line) transparent;
+      padding-inline-end:4px;border-radius:22px;
     }
     .side::-webkit-scrollbar{width:3px}
     .side::-webkit-scrollbar-track{background:transparent}
@@ -65,6 +74,29 @@ try{var _s=JSON.parse(localStorage.getItem('kinkjars-v1')||'null');if(_s&&_s.lan
   input[type=text]:focus{border-color:var(--ink);outline:none}
   button{font:inherit;cursor:pointer;color:var(--ink)}
   button:focus-visible,input:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+
+  /* age picker */
+  .age-block{margin-top:18px;padding-top:18px;border-top:2px dashed var(--line)}
+  .age-title{font-family:var(--font-display);font-weight:700;font-size:18px;margin:0 0 4px}
+  html[lang=fa] .age-title{font-size:17px}
+  .age-hint{color:var(--muted);font-size:14px;margin:0 0 12px}
+  .age-scale{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;max-width:420px}
+  .age-scale button{
+    height:52px;border-radius:14px;border:2px solid var(--ink);background:#fff;
+    font-family:var(--font-display);font-weight:600;font-size:17px;
+    transition:transform .08s;
+  }
+  html[lang=fa] .age-scale button{font-size:15px}
+  .age-scale button:active{transform:scale(.94)}
+  .age-scale button[aria-pressed=true]{background:var(--c);color:var(--on-c);box-shadow:0 3px 0 var(--ink)}
+  .age-skip{display:inline-block;margin-top:10px;font-size:14px;color:var(--muted);text-decoration:underline;background:none;border:0;padding:4px 0;cursor:pointer}
+  .age-skip:hover{color:var(--c)}
+  .age-skip[aria-pressed=true]{color:var(--c);font-weight:700}
+  @media(max-width:520px){
+    .age-scale{grid-template-columns:repeat(2,1fr);gap:6px}
+    .age-scale button{height:46px;font-size:14px}
+    html[lang=fa] .age-scale button{font-size:13px}
+  }
 
   .picker{display:grid;gap:18px}
   @media(min-width:620px){.picker{grid-template-columns:1fr 170px;align-items:center}}
@@ -123,24 +155,15 @@ try{var _s=JSON.parse(localStorage.getItem('kinkjars-v1')||'null');if(_s&&_s.lan
   .linkbtn:hover{color:var(--c)}
 
   .support-card{
-    display:flex;
-    align-items:center;
-    gap:12px;
-    margin-top:14px;
-    padding:12px 14px;
-    border-top:1px dashed var(--line);
-    padding-top:16px;
-    text-decoration:none;
-    color:var(--ink);
-    border-radius:12px;
+    display:flex;align-items:center;gap:12px;
+    margin-top:14px;padding:12px 14px;
+    border-top:1px dashed var(--line);padding-top:16px;
+    text-decoration:none;color:var(--ink);border-radius:12px;
     transition:background .15s,border-color .15s;
   }
   .support-card .sc-icon{
-    flex-shrink:0;
-    width:38px;height:38px;
-    border-radius:50%;
-    background:rgba(230,57,70,.08);
-    color:var(--c);
+    flex-shrink:0;width:38px;height:38px;border-radius:50%;
+    background:rgba(230,57,70,.08);color:var(--c);
     display:flex;align-items:center;justify-content:center;
     transition:background .15s,color .15s;
   }
@@ -202,6 +225,13 @@ try{var _s=JSON.parse(localStorage.getItem('kinkjars-v1')||'null');if(_s&&_s.lan
         <h2 data-i18n="nameQ">اسمت چیه؟</h2>
         <p class="hint" data-i18n="nameHint">بالای خط خالی نوشته می‌شه. نیک‌نیم هم مناسبه، یا خالی بذار.</p>
         <input type="text" id="name" maxlength="24" autocomplete="off" placeholder="اسمت" data-i18n-ph="namePh">
+
+        <div class="age-block">
+          <p class="age-title" data-i18n="ageQ">چند سالته؟</p>
+          <p class="age-hint" data-i18n="ageHint">بازه رو انتخاب کن — اگه دوست نداری، رد کن.</p>
+          <div class="age-scale" id="ageScale" role="radiogroup" aria-label="بازهٔ سنی"></div>
+          <button class="age-skip" id="ageSkip" type="button" data-i18n="ageSkip">ترجیح می‌دم نگم</button>
+        </div>
       </section>
 
       <section class="panel">
@@ -320,15 +350,28 @@ const JARS = [
   { en: ["spit"],                                fa: ["تف‌بازی"],                   faLong: "تف‌بازی (Spit)" }
 ];
 
+const AGE_BUCKETS = [
+  { value: "18-24", fa: "۱۸–۲۴", en: "18–24" },
+  { value: "25-34", fa: "۲۵–۳۴", en: "25–34" },
+  { value: "35-44", fa: "۳۵–۴۴", en: "35–44" },
+  { value: "45-54", fa: "۴۵–۵۴", en: "45–54" },
+  { value: "55+",   fa: "۵۵+",   en: "55+" }
+];
+
 const I18N = {
   fa: {
-    title: "شیشه‌های کینک",
+    title: "شیشه‌های کینک من",
+    posterTitle: "شیشه‌های کینک من",
     h1: 'شیشه‌هات رو <span>پر کن</span>',
     headerSub: "یه رنگ انتخاب کن، هر کدوم رو از ۱ (کم) تا ۵ (لبریز) امتیاز بده، بعد عکست رو ذخیره کن. چیزیت نیست؟ ردش کن و شیشه خالی می‌مونه.",
     step1: "مرحله ۱", step2: "مرحله ۲", step3: "مرحله ۳", step4: "مرحله ۴",
     nameQ: "اسمت چیه؟",
     nameHint: "بالای خط خالی نوشته می‌شه. نیک‌نیم هم مناسبه، یا خالی بذار.",
     namePh: "اسمت",
+    ageQ: "چند سالته؟",
+    ageHint: "بازه رو انتخاب کن — اگه دوست نداری، رد کن.",
+    ageSkip: "ترجیح می‌دم نگم",
+    ageSuffix: "ساله",
     colorQ: "رنگت رو انتخاب کن",
     red: "قرمز", green: "سبز", blue: "آبی",
     surprise: "غافلگیرم کن",
@@ -352,13 +395,18 @@ const I18N = {
     jumpTo: label => `برو به ${label}`
   },
   en: {
-    title: "Kink Jars",
+    title: "My Kink Jars",
+    posterTitle: "My Kink Jars",
     h1: 'Fill your <span>jars</span>',
     headerSub: "Pick a color, rate each one from 1 (a little) to 5 (overflowing), then save your picture. Not your thing? Skip it and the jar stays empty.",
     step1: "Step 1", step2: "Step 2", step3: "Step 3", step4: "Step 4",
     nameQ: "What's your name?",
     nameHint: "It goes on the blank line at the top. Nickname is fine, or leave it blank.",
     namePh: "Your name",
+    ageQ: "How old are you?",
+    ageHint: "Pick a range — skip if you'd rather not say.",
+    ageSkip: "Prefer not to say",
+    ageSuffix: "years old",
     colorQ: "Pick your color",
     red: "Red", green: "Green", blue: "Blue",
     surprise: "Surprise me",
@@ -391,12 +439,15 @@ const STORE = "kinkjars-v1";
 
 const toFa = n => String(n).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
 
-let state = { name: "", color: "#e63946", answers: JARS.map(() => 0), lang: "fa" };
+let state = { name: "", age: null, color: "#e63946", answers: JARS.map(() => 0), lang: "fa" };
 try {
   const s = JSON.parse(localStorage.getItem(STORE) || "null");
-  if (s && Array.isArray(s.answers)) {
-    state = { ...state, ...s, answers: JARS.map((_, i) => s.answers[i] || 0) };
-    if (state.lang !== "fa" && state.lang !== "en") state.lang = "fa";
+  if (s) {
+    if (Array.isArray(s.answers)) state.answers = JARS.map((_, i) => s.answers[i] || 0);
+    if (typeof s.name === "string") state.name = s.name;
+    if (typeof s.color === "string") state.color = s.color;
+    if (s.lang === "fa" || s.lang === "en") state.lang = s.lang;
+    if (s.age === "prefer_not" || AGE_BUCKETS.some(b => b.value === s.age)) state.age = s.age;
   }
 } catch (e) {}
 const persist = () => { try { localStorage.setItem(STORE, JSON.stringify(state)); } catch (e) {} };
@@ -581,7 +632,6 @@ function drawLvlOnCanvas(c, x, y, level, rgb, w, h) {
   }
 }
 
-/* ===== geometry = jar body + label (user's tuned values) ===== */
 function getCardRect(i) {
   const col = i % COLS, row = Math.floor(i / COLS);
   const cx = PW / 2 + (col - (COLS - 1) / 2) * 150;
@@ -593,8 +643,16 @@ function getCardRect(i) {
   return { x, y, w, h, cx, top };
 }
 
+function ageLabel(bucket, lang) {
+  if (!bucket || bucket === "prefer_not") return "";
+  const b = AGE_BUCKETS.find(x => x.value === bucket);
+  if (!b) return "";
+  return lang === "fa" ? b.fa : b.en;
+}
+
 function drawPoster(canvas, scale) {
   const isFa = state.lang === "fa";
+  const t = I18N[state.lang];
   const rgb = hexToRgb(state.color);
   canvas.width = PW * scale; canvas.height = PH * scale;
   const c = canvas.getContext("2d");
@@ -604,7 +662,7 @@ function drawPoster(canvas, scale) {
 
   c.fillStyle = INK; c.textBaseline = "alphabetic";
   c.font = isFa ? "800 88px Vazirmatn, sans-serif" : "700 104px Oswald, Impact, 'Arial Narrow', sans-serif";
-  const titleText = isFa ? "شیشه‌های کینک" : "Kink Jars";
+  const titleText = t.posterTitle;
   const tw = c.measureText(titleText).width;
   const lineW = 300, gap = 24, totalW = lineW + gap + tw, startX = (PW - totalW) / 2, base = 140;
   c.fillRect(startX, base - 5, lineW, 7);
@@ -612,12 +670,20 @@ function drawPoster(canvas, scale) {
   c.fillText(titleText, startX + lineW + gap + tw / 2, base);
 
   const name = state.name.trim();
+  const ageTxt = ageLabel(state.age, state.lang);
   if (name) {
     let size = isFa ? 56 : 66;
     const makeFont = s => isFa ? `800 ${s}px Vazirmatn, sans-serif` : `${s}px "Permanent Marker", "Comic Sans MS", cursive`;
     c.font = makeFont(size);
     while (c.measureText(name).width > lineW - 12 && size > 20) { size -= 2; c.font = makeFont(size); }
     c.fillText(name, startX + lineW / 2, base - 16);
+  }
+  if (ageTxt) {
+    c.fillStyle = "#555"; c.textAlign = "center";
+    c.font = isFa ? "600 24px Vazirmatn, sans-serif" : "600 24px Oswald, 'Arial Narrow', sans-serif";
+    const line = `${ageTxt} ${t.ageSuffix}`;
+    c.fillText(line, startX + lineW / 2, base + 30);
+    c.fillStyle = INK;
   }
 
   c.fillStyle = "#555"; c.textAlign = "center";
@@ -665,8 +731,45 @@ const $ = id => document.getElementById(id);
 const qWrap = $("questions");
 const sw = $("swatches");
 const overlay = $("posterOverlay");
+const ageScale = $("ageScale");
+const ageSkip = $("ageSkip");
 let minis = [];
 let qEls = [];
+
+function buildAge() {
+  const isFa = state.lang === "fa";
+  ageScale.innerHTML = "";
+  AGE_BUCKETS.forEach(b => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.textContent = isFa ? b.fa : b.en;
+    btn.setAttribute("aria-pressed", state.age === b.value);
+    btn.onclick = () => {
+      state.age = (state.age === b.value) ? null : b.value;
+      persist();
+      syncAge();
+      update();
+    };
+    ageScale.appendChild(btn);
+  });
+  ageSkip.setAttribute("aria-pressed", state.age === "prefer_not");
+  ageScale.setAttribute("aria-label", isFa ? "بازهٔ سنی" : "Age range");
+}
+
+function syncAge() {
+  [...ageScale.children].forEach((btn, i) => {
+    btn.setAttribute("aria-pressed", state.age === AGE_BUCKETS[i].value);
+  });
+  ageSkip.setAttribute("aria-pressed", state.age === "prefer_not");
+  ageSkip.textContent = I18N[state.lang].ageSkip;
+}
+
+ageSkip.addEventListener("click", () => {
+  state.age = (state.age === "prefer_not") ? null : "prefer_not";
+  persist();
+  syncAge();
+  update();
+});
 
 function buildQuestions() {
   const t = I18N[state.lang];
@@ -769,6 +872,8 @@ function applyLang() {
     b.setAttribute("aria-label", (lang === "fa" ? "رنگ " : "Color ") + b.dataset.hex);
   });
 
+  buildAge();
+  syncAge();
   buildQuestions();
   buildOverlay();
   update();
@@ -855,7 +960,6 @@ function render() {
   drawPoster($("poster"), 1);
 }
 
-/* ===== chain wheel scroll to side panel when page is at the very end/start ===== */
 (function () {
   const side = $("sidePanel");
   if (!side) return;
@@ -866,8 +970,8 @@ function render() {
   }
   window.addEventListener("wheel", function (e) {
     if (!isDesktop()) return;
-    if (mouseInsideSide(e)) return;                  // مرورگر خودش مدیریت می‌کند
-    if (e.ctrlKey) return;                            // زوم
+    if (mouseInsideSide(e)) return;
+    if (e.ctrlKey) return;
     const doc = document.documentElement;
     const atBottom = window.scrollY + window.innerHeight >= doc.scrollHeight - 2;
     const atTop = window.scrollY <= 0;
@@ -924,8 +1028,10 @@ $("reset").onclick = () => {
   if (!confirm(I18N[state.lang].confirmReset)) return;
   state.answers = JARS.map(() => 0);
   state.name = "";
+  state.age = null;
   $("name").value = "";
   persist();
+  syncAge();
   update();
   window.scrollTo({ top: 0, behavior: "smooth" });
 };
@@ -941,7 +1047,9 @@ Promise.all([
   "500 30px Vazirmatn",
   "700 23px Vazirmatn",
   "800 56px Vazirmatn",
-  "800 88px Vazirmatn"
+  "800 88px Vazirmatn",
+  "600 24px Vazirmatn",
+  "600 24px Oswald"
 ].map(f => document.fonts.load(f)))
   .catch(() => {})
   .then(() => document.fonts.ready)
