@@ -410,6 +410,7 @@ try{var _s=JSON.parse(localStorage.getItem('kinkjars-v1')||'null');if(_s&&_s.lan
     <p data-i18n="qrHint">با دوربین گوشی اسکن کن تا خروجی باز بشه.</p>
     <div class="qr-box"><canvas id="qrBigCanvas"></canvas></div>
     <div class="qr-actions">
+      <button class="big" id="qrOpenLink" type="button" data-i18n="qrOpenLink">باز کردن لینک</button>
       <button class="big" id="qrDownload" type="button" data-i18n="qrDownload">دانلود QR</button>
       <button class="big secondary" id="qrClose" type="button" data-i18n="done">تمومه</button>
     </div>
@@ -513,6 +514,7 @@ const I18N = {
     jumpTo: label => `برو به ${label}`,
     qrTitle: "کد QR اشتراک‌گذاری",
     qrHint: "با دوربین گوشی اسکن کن تا خروجی باز بشه.",
+    qrOpenLink: "باز کردن لینک",
     qrDownload: "دانلود QR",
     qrAria: "کد QR برای لینک اشتراک‌گذاری",
     viewBanner: (name) => name
@@ -565,6 +567,7 @@ const I18N = {
     jumpTo: label => `Jump to ${label}`,
     qrTitle: "Share QR code",
     qrHint: "Scan with your phone camera to open the result.",
+    qrOpenLink: "Open link",
     qrDownload: "Download QR",
     qrAria: "QR code for the share link",
     viewBanner: (name) => name
@@ -1309,6 +1312,10 @@ qrMini.addEventListener("click", (e) => {
 
 $("qrClose").addEventListener("click", () => { $("qrModal").hidden = true; });
 $("qrModal").addEventListener("click", (e) => { if (e.target.id === "qrModal") $("qrModal").hidden = true; });
+$("qrOpenLink").addEventListener("click", () => {
+  if (!currentShareUrl) return;
+  window.open(currentShareUrl, "_blank", "noopener,noreferrer");
+});
 $("qrDownload").addEventListener("click", () => {
   const c = document.getElementById("qrBigCanvas");
   if (!c || !c.width) return;
