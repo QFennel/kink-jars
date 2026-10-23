@@ -7,7 +7,7 @@
 <meta name="description" content="شیشه‌هات رو پر کن، رنگت رو انتخاب کن، عکست رو ذخیره کن.">
 <meta property="og:title" content=" میتونی تمام شیشه کینک های من اینجا ببینی.">
 <meta property="og:description" content="شیشه‌هات رو پر کن، رنگت رو انتخاب کن، عکست رو ذخیره کن و به اشتراک بگذار.">
-<meta name="robots" content="noindex">
+<meta name="robots" content="index">
 <script>
 try{var _s=JSON.parse(localStorage.getItem('kinkjars-v1')||'null');if(_s&&_s.lang==='en'){document.documentElement.lang='en';document.documentElement.dir='ltr';}}catch(e){}
 </script>
@@ -115,6 +115,23 @@ try{var _s=JSON.parse(localStorage.getItem('kinkjars-v1')||'null');if(_s&&_s.lan
     html[lang=fa] .age-scale button{font-size:13px}
   }
 
+  .gender-block{margin-top:18px;padding-top:18px;border-top:2px dashed var(--line)}
+  .gender-title{font-family:var(--font-display);font-weight:700;font-size:18px;margin:0 0 4px}
+  html[lang=fa] .gender-title{font-size:17px}
+  .gender-hint{color:var(--muted);font-size:14px;margin:0 0 12px}
+  .gender-scale{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;max-width:280px}
+  .gender-scale button{height:52px;border-radius:14px;border:2px solid var(--ink);background:#fff;font-family:var(--font-display);font-weight:600;font-size:17px;transition:transform .08s}
+  html[lang=fa] .gender-scale button{font-size:15px}
+  .gender-scale button:active{transform:scale(.94)}
+  .gender-scale button[aria-pressed=true]{background:var(--c);color:var(--on-c);box-shadow:0 3px 0 var(--ink)}
+  .gender-skip{display:inline-block;margin-top:10px;font-size:14px;color:var(--muted);text-decoration:underline;background:none;border:0;padding:4px 0;cursor:pointer}
+  .gender-skip:hover{color:var(--c)}
+  .gender-skip[aria-pressed=true]{color:var(--c);font-weight:700}
+  @media(max-width:520px){
+    .gender-scale button{height:46px;font-size:14px}
+    html[lang=fa] .gender-scale button{font-size:13px}
+  }
+
   .picker{display:grid;gap:18px}
   @media(min-width:620px){.picker{grid-template-columns:1fr 170px;align-items:center}}
   .swatches{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;max-width:420px}
@@ -170,7 +187,6 @@ try{var _s=JSON.parse(localStorage.getItem('kinkjars-v1')||'null');if(_s&&_s.lan
   .big.secondary{background:#fff;color:var(--ink);margin-top:10px}
   .big.secondary:hover{background:var(--bg)}
 
-  /* share button with QR inside */
   #shareBtn{display:flex;align-items:center;justify-content:center;gap:12px;min-height:60px;padding:14px 20px}
   #shareBtn .share-label{flex:1;text-align:center}
   #shareBtn .qr-mini{display:none;width:64px;height:64px;background:#fff;border-radius:10px;padding:4px;flex-shrink:0;border:2px solid var(--ink);cursor:pointer;transition:transform .15s}
@@ -234,7 +250,6 @@ try{var _s=JSON.parse(localStorage.getItem('kinkjars-v1')||'null');if(_s&&_s.lan
   .sheet img{width:100%;border-radius:10px;border:2px solid var(--line)}
   .sheet .support-card{margin-top:16px;border-top:0;padding-top:0}
 
-  /* QR modal */
   #qrModal{position:fixed;inset:0;background:rgba(20,16,12,.6);display:flex;align-items:center;justify-content:center;padding:16px;z-index:12}
   #qrModal[hidden]{display:none}
   .qr-sheet{background:#fff;border-radius:22px;padding:24px;max-width:420px;width:100%;max-height:92vh;overflow:auto;text-align:center}
@@ -288,6 +303,13 @@ try{var _s=JSON.parse(localStorage.getItem('kinkjars-v1')||'null');if(_s&&_s.lan
           <p class="age-hint" data-i18n="ageHint">بازه رو انتخاب کن — اگه دوست نداری، رد کن.</p>
           <div class="age-scale" id="ageScale" role="radiogroup" aria-label="بازهٔ سنی"></div>
           <button class="age-skip" id="ageSkip" type="button" data-i18n="ageSkip">ترجیح می‌دم نگم</button>
+        </div>
+
+        <div class="gender-block">
+          <p class="gender-title" data-i18n="genderQ">جنسیتت؟</p>
+          <p class="gender-hint" data-i18n="genderHint">انتخاب کن — اگه دوست نداری، رد کن.</p>
+          <div class="gender-scale" id="genderScale" role="radiogroup" aria-label="جنسیت"></div>
+          <button class="gender-skip" id="genderSkip" type="button" data-i18n="genderSkip">ترجیح می‌دم نگم</button>
         </div>
       </section>
 
@@ -403,7 +425,6 @@ try{var _s=JSON.parse(localStorage.getItem('kinkjars-v1')||'null');if(_s&&_s.lan
 </div>
 
 <script>
-/* ===== داده شیشه‌ها ===== */
 const JARS = [
   { en: ["being","a dom"],                       fa: ["سلطه‌گر بودن"],              faLong: "سلطه‌گر بودن (Dom)" },
   { en: ["being","a sub"],                       fa: ["سلطه‌پذیر بودن"],            faLong: "سلطه‌پذیر بودن (Sub)" },
@@ -443,6 +464,11 @@ const AGE_BUCKETS = [
   { value: "55+",   fa: "۵۵+",   en: "55+" }
 ];
 
+const GENDERS = [
+  { value: "female", fa: "زن", en: "Female" },
+  { value: "male",   fa: "مرد", en: "Male" }
+];
+
 const I18N = {
   fa: {
     title: "شیشه‌های کینک من",
@@ -457,6 +483,9 @@ const I18N = {
     ageHint: "بازه رو انتخاب کن — اگه دوست نداری، رد کن.",
     ageSkip: "ترجیح می‌دم نگم",
     ageSuffix: "ساله",
+    genderQ: "جنسیتت؟",
+    genderHint: "انتخاب کن — اگه دوست نداری، رد کن.",
+    genderSkip: "ترجیح می‌دم نگم",
     colorQ: "رنگت رو انتخاب کن",
     red: "قرمز", green: "سبز", blue: "آبی",
     surprise: "غافلگیرم کن",
@@ -506,6 +535,9 @@ const I18N = {
     ageHint: "Pick a range — skip if you'd rather not say.",
     ageSkip: "Prefer not to say",
     ageSuffix: "years old",
+    genderQ: "Gender?",
+    genderHint: "Pick one — skip if you'd rather not say.",
+    genderSkip: "Prefer not to say",
     colorQ: "Pick your color",
     red: "Red", green: "Green", blue: "Blue",
     surprise: "Surprise me",
@@ -556,12 +588,12 @@ function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 }
 
-let state = { name: "", age: null, color: "#e63946", answers: JARS.map(() => 0), lang: "fa" };
+let state = { name: "", age: null, gender: null, color: "#e63946", answers: JARS.map(() => 0), lang: "fa" };
 let isViewMode = false;
 let currentShareUrl = "";
 
 function encodeShare(s) {
-  const payload = { v: SHARE_VERSION, n: s.name, a: s.age || "", c: s.color, l: s.lang, d: s.answers.join("") };
+  const payload = { v: SHARE_VERSION, n: s.name, a: s.age || "", g: s.gender || "", c: s.color, l: s.lang, d: s.answers.join("") };
   try { return LZString.compressToEncodedURIComponent(JSON.stringify(payload)); } catch (e) { return null; }
 }
 function decodeShare(code) {
@@ -580,6 +612,7 @@ function decodeShare(code) {
   return {
     name: typeof payload.n === "string" ? payload.n.slice(0, 24) : "",
     age: (payload.a === "prefer_not" || AGE_BUCKETS.some(b => b.value === payload.a)) ? payload.a : null,
+    gender: (payload.g === "prefer_not" || GENDERS.some(g => g.value === payload.g)) ? payload.g : null,
     color: /^#[0-9a-f]{6}$/i.test(payload.c) ? payload.c : "#e63946",
     lang: (payload.l === "en" || payload.l === "fa") ? payload.l : "fa",
     answers
@@ -602,6 +635,7 @@ if (shareCode) {
       if (typeof s.color === "string") state.color = s.color;
       if (s.lang === "fa" || s.lang === "en") state.lang = s.lang;
       if (s.age === "prefer_not" || AGE_BUCKETS.some(b => b.value === s.age)) state.age = s.age;
+      if (s.gender === "prefer_not" || GENDERS.some(g => g.value === s.gender)) state.gender = s.gender;
     }
   } catch (e) {}
 }
@@ -805,6 +839,12 @@ function ageLabel(bucket, lang) {
   if (!b) return "";
   return lang === "fa" ? b.fa : b.en;
 }
+function genderLabel(value, lang) {
+  if (!value || value === "prefer_not") return "";
+  const g = GENDERS.find(x => x.value === value);
+  if (!g) return "";
+  return lang === "fa" ? g.fa : g.en;
+}
 
 function drawPoster(canvas, scale) {
   const isFa = state.lang === "fa";
@@ -827,6 +867,7 @@ function drawPoster(canvas, scale) {
 
   const name = state.name.trim();
   const ageTxt = ageLabel(state.age, state.lang);
+  const genderTxt = genderLabel(state.gender, state.lang);
   if (name) {
     let size = isFa ? 56 : 66;
     const makeFont = s => isFa ? `800 ${s}px Vazirmatn, sans-serif` : `${s}px "Permanent Marker", "Comic Sans MS", cursive`;
@@ -834,10 +875,13 @@ function drawPoster(canvas, scale) {
     while (c.measureText(name).width > lineW - 12 && size > 20) { size -= 2; c.font = makeFont(size); }
     c.fillText(name, startX + lineW / 2, base - 16);
   }
-  if (ageTxt) {
+  const parts = [];
+  if (ageTxt) parts.push(`${ageTxt} ${t.ageSuffix}`);
+  if (genderTxt) parts.push(genderTxt);
+  if (parts.length) {
     c.fillStyle = "#555"; c.textAlign = "center";
     c.font = isFa ? "600 24px Vazirmatn, sans-serif" : "600 24px Oswald, 'Arial Narrow', sans-serif";
-    c.fillText(`${ageTxt} ${t.ageSuffix}`, startX + lineW / 2, base + 30);
+    c.fillText(parts.join(" · "), startX + lineW / 2, base + 30);
     c.fillStyle = INK;
   }
 
@@ -881,7 +925,6 @@ function drawMini(canvas, idx, level, rgb) {
   drawJar(c, idx, level, rgb);
 }
 
-/* ===== QR helpers ===== */
 function makeQRCanvas(canvas, text, pixels) {
   if (typeof qrcode === "undefined") return false;
   const qr = qrcode(0, "M");
@@ -890,33 +933,15 @@ function makeQRCanvas(canvas, text, pixels) {
   const count = qr.getModuleCount();
   const cell = Math.max(2, Math.floor(pixels / count));
   const size = cell * count;
-  canvas.width = size;
-  canvas.height = size;
+  canvas.width = size; canvas.height = size;
   const ctx = canvas.getContext("2d");
-  ctx.fillStyle = "#fff";
-  ctx.fillRect(0, 0, size, size);
+  ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, size, size);
   ctx.fillStyle = "#151311";
-  for (let row = 0; row < count; row++) {
-    for (let col = 0; col < count; col++) {
-      if (qr.isDark(row, col)) {
-        ctx.fillRect(col * cell, row * cell, cell, cell);
-      }
-    }
-  }
+  for (let row = 0; row < count; row++) for (let col = 0; col < count; col++) if (qr.isDark(row, col)) ctx.fillRect(col * cell, row * cell, cell, cell);
   return true;
 }
-
-function drawQrMini() {
-  if (!currentShareUrl) return;
-  const c = document.getElementById("qrMiniCanvas");
-  makeQRCanvas(c, currentShareUrl, 128);
-}
-
-function drawQrBig() {
-  if (!currentShareUrl) return;
-  const c = document.getElementById("qrBigCanvas");
-  makeQRCanvas(c, currentShareUrl, 560);
-}
+function drawQrMini() { if (currentShareUrl) makeQRCanvas(document.getElementById("qrMiniCanvas"), currentShareUrl, 128); }
+function drawQrBig() { if (currentShareUrl) makeQRCanvas(document.getElementById("qrBigCanvas"), currentShareUrl, 560); }
 
 /* ===== UI ===== */
 const $ = id => document.getElementById(id);
@@ -925,6 +950,8 @@ const sw = $("swatches");
 const overlay = $("posterOverlay");
 const ageScale = $("ageScale");
 const ageSkip = $("ageSkip");
+const genderScale = $("genderScale");
+const genderSkip = $("genderSkip");
 const copyHint = $("copyHint");
 const shareBtn = $("shareBtn");
 const qrMini = $("qrMini");
@@ -948,7 +975,6 @@ function buildAge() {
   ageSkip.setAttribute("aria-pressed", state.age === "prefer_not");
   ageScale.setAttribute("aria-label", isFa ? "بازهٔ سنی" : "Age range");
 }
-
 function syncAge() {
   [...ageScale.children].forEach((btn, i) => {
     btn.setAttribute("aria-pressed", state.age === AGE_BUCKETS[i].value);
@@ -956,10 +982,38 @@ function syncAge() {
   ageSkip.setAttribute("aria-pressed", state.age === "prefer_not");
   ageSkip.textContent = I18N[state.lang].ageSkip;
 }
-
 ageSkip.addEventListener("click", () => {
   state.age = (state.age === "prefer_not") ? null : "prefer_not";
   persist(); syncAge(); update();
+});
+
+function buildGender() {
+  const isFa = state.lang === "fa";
+  genderScale.innerHTML = "";
+  GENDERS.forEach(g => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.textContent = isFa ? g.fa : g.en;
+    btn.setAttribute("aria-pressed", state.gender === g.value);
+    btn.onclick = () => {
+      state.gender = (state.gender === g.value) ? null : g.value;
+      persist(); syncGender(); update();
+    };
+    genderScale.appendChild(btn);
+  });
+  genderSkip.setAttribute("aria-pressed", state.gender === "prefer_not");
+  genderScale.setAttribute("aria-label", isFa ? "جنسیت" : "Gender");
+}
+function syncGender() {
+  [...genderScale.children].forEach((btn, i) => {
+    btn.setAttribute("aria-pressed", state.gender === GENDERS[i].value);
+  });
+  genderSkip.setAttribute("aria-pressed", state.gender === "prefer_not");
+  genderSkip.textContent = I18N[state.lang].genderSkip;
+}
+genderSkip.addEventListener("click", () => {
+  state.gender = (state.gender === "prefer_not") ? null : "prefer_not";
+  persist(); syncGender(); update();
 });
 
 function buildQuestions() {
@@ -1061,10 +1115,9 @@ function applyLang() {
     b.setAttribute("aria-label", (lang === "fa" ? "رنگ " : "Color ") + b.dataset.hex);
   });
 
-  buildAge();
-  syncAge();
-  buildQuestions();
-  buildOverlay();
+  buildAge(); syncAge();
+  buildGender(); syncGender();
+  buildQuestions(); buildOverlay();
   renderViewBanner();
   update();
 }
@@ -1243,7 +1296,6 @@ async function doShare() {
   currentShareUrl = url;
   const ok = await copyText(url);
   showCopyHint(ok ? t.copyOk : t.copyErr, ok ? "ok" : "err");
-  // reveal mini QR inside the button
   drawQrMini();
   shareBtn.classList.add("has-qr");
 }
@@ -1257,7 +1309,6 @@ qrMini.addEventListener("click", (e) => {
 
 $("qrClose").addEventListener("click", () => { $("qrModal").hidden = true; });
 $("qrModal").addEventListener("click", (e) => { if (e.target.id === "qrModal") $("qrModal").hidden = true; });
-
 $("qrDownload").addEventListener("click", () => {
   const c = document.getElementById("qrBigCanvas");
   if (!c || !c.width) return;
@@ -1283,7 +1334,6 @@ if (shareError) {
   });
 } else {
   shareBtn.addEventListener("click", (e) => {
-    // if click landed on the mini QR, handled by its own listener
     if (e.target.closest(".qr-mini")) return;
     doShare();
   });
@@ -1297,10 +1347,11 @@ if (shareError) {
     state.answers = JARS.map(() => 0);
     state.name = "";
     state.age = null;
+    state.gender = null;
     $("name").value = "";
     shareBtn.classList.remove("has-qr");
     currentShareUrl = "";
-    persist(); syncAge(); update();
+    persist(); syncAge(); syncGender(); update();
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
