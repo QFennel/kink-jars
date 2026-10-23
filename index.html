@@ -43,7 +43,6 @@ try{var _s=JSON.parse(localStorage.getItem('kinkjars-v1')||'null');if(_s&&_s.lan
   header h1 span{color:var(--c);-webkit-text-stroke:2px var(--ink);paint-order:stroke fill}
   html[lang=fa] header h1 span{-webkit-text-stroke:1.5px var(--ink)}
   header p{margin:10px 0 0;color:var(--muted);max-width:640px}
-  body.view-mode header{display:none}
 
   .view-banner{
     display:none;
@@ -57,8 +56,13 @@ try{var _s=JSON.parse(localStorage.getItem('kinkjars-v1')||'null');if(_s&&_s.lan
   body.view-mode #reset{display:none}
   body.view-mode #fillOwnBtn{display:block}
   body.view-mode .poster-overlay .hot{pointer-events:none}
+  /* in view mode only: hide header text, share button, privacy text */
+  body.view-mode header,
+  body.view-mode #shareBtn,
+  body.view-mode #copyHint,
+  body.view-mode .small-links span[data-i18n="privacy"]{display:none !important}
 
-  /* ===== view mode: full-screen centered result ===== */
+  /* view mode: full-screen centered result */
   body.view-mode .layout{display:block}
   body.view-mode main{display:none}
   body.view-mode aside.side{
@@ -245,6 +249,7 @@ try{var _s=JSON.parse(localStorage.getItem('kinkjars-v1')||'null');if(_s&&_s.lan
 <div class="wrap">
   <header>
     <h1 data-i18n="h1">شیشه‌هات رو <span>پر کن</span></h1>
+    <p data-i18n="headerSub">یه رنگ انتخاب کن، هر کدوم رو از ۱ (کم) تا ۵ (لبریز) امتیاز بده، بعد عکست رو ذخیره کن. چیزیت نیست؟ ردش کن و شیشه خالی می‌مونه.</p>
   </header>
 
   <div class="layout">
@@ -302,9 +307,12 @@ try{var _s=JSON.parse(localStorage.getItem('kinkjars-v1')||'null');if(_s&&_s.lan
           <div class="poster-overlay" id="posterOverlay" role="group" aria-label="پرش به کینک"></div>
         </div>
         <button class="big" id="save" type="button" data-i18n="saveBtn">ذخیره شیشه‌ها</button>
+        <button class="big secondary" id="shareBtn" type="button" data-i18n="shareBtn">ساخت لینک اشتراک‌گذاری</button>
+        <div class="copy-hint" id="copyHint"></div>
         <button class="big secondary" id="fillOwnBtn" type="button" data-i18n="fillOwnBtn">شیشه‌های خودت رو پر کن</button>
 
         <div class="small-links">
+          <span data-i18n="privacy">هیچی از گوشیت خارج نمی‌شه.</span>
           <button class="linkbtn" id="reset" type="button" data-i18n="reset">شروع دوباره</button>
         </div>
 
@@ -402,6 +410,7 @@ const I18N = {
     title: "شیشه‌های کینک من",
     posterTitle: "شیشه‌های کینک من",
     h1: 'شیشه‌هات رو <span>پر کن</span>',
+    headerSub: "یه رنگ انتخاب کن، هر کدوم رو از ۱ (کم) تا ۵ (لبریز) امتیاز بده، بعد عکست رو ذخیره کن. چیزیت نیست؟ ردش کن و شیشه خالی می‌مونه.",
     step1: "مرحله ۱", step2: "مرحله ۲", step3: "مرحله ۳", step4: "نتیجه",
     nameQ: "اسمت چیه؟",
     nameHint: "بالای خط خالی نوشته می‌شه. نیک‌نیم هم مناسبه، یا خالی بذار.",
@@ -418,7 +427,11 @@ const I18N = {
     aLittle: "کم", overflowing: "لبریز",
     yourJars: "شیشه‌هات",
     saveBtn: "ذخیره شیشه‌ها",
+    shareBtn: "ساخت لینک اشتراک‌گذاری",
     fillOwnBtn: "شیشه‌های خودت رو پر کن",
+    copyOk: "لینک کپی شد!",
+    copyErr: "کپی نشد — لینک را دستی کپی کن",
+    privacy: "هیچی از گوشیت خارج نمی‌شه.",
     reset: "شروع دوباره",
     support: "ارتباط با پشتیبان",
     supportHint: "سؤالی داری؟ پیام بده",
@@ -442,6 +455,7 @@ const I18N = {
     title: "My Kink Jars",
     posterTitle: "My Kink Jars",
     h1: 'Fill your <span>jars</span>',
+    headerSub: "Pick a color, rate each one from 1 (a little) to 5 (overflowing), then save your picture. Not your thing? Skip it and the jar stays empty.",
     step1: "Step 1", step2: "Step 2", step3: "Step 3", step4: "Result",
     nameQ: "What's your name?",
     nameHint: "It goes on the blank line at the top. Nickname is fine, or leave it blank.",
@@ -458,7 +472,11 @@ const I18N = {
     aLittle: "a little", overflowing: "overflowing",
     yourJars: "Your jars",
     saveBtn: "Save my jars",
+    shareBtn: "Create share link",
     fillOwnBtn: "Fill your own jars",
+    copyOk: "Link copied!",
+    copyErr: "Copy failed — copy the link manually",
+    privacy: "Nothing leaves your phone.",
     reset: "Start over",
     support: "Contact support",
     supportHint: "Got a question? Send a message",
@@ -823,6 +841,7 @@ const sw = $("swatches");
 const overlay = $("posterOverlay");
 const ageScale = $("ageScale");
 const ageSkip = $("ageSkip");
+const copyHint = $("copyHint");
 let minis = [];
 let qEls = [];
 
@@ -1103,6 +1122,40 @@ async function save() {
   $("modalImg").src = url; $("modal").hidden = false; $("closeModal").focus();
 }
 
+function showCopyHint(msg, cls) {
+  copyHint.textContent = msg;
+  copyHint.className = "copy-hint" + (cls ? " " + cls : "");
+  clearTimeout(copyHint._t);
+  if (cls) copyHint._t = setTimeout(() => { copyHint.textContent = ""; copyHint.className = "copy-hint"; }, 2600);
+}
+
+async function copyText(text) {
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+      return true;
+    }
+  } catch (e) {}
+  try {
+    const ta = document.createElement("textarea");
+    ta.value = text; ta.setAttribute("readonly", "");
+    ta.style.position = "fixed"; ta.style.top = "-1000px";
+    document.body.appendChild(ta); ta.select();
+    const ok = document.execCommand("copy");
+    document.body.removeChild(ta);
+    return ok;
+  } catch (e) { return false; }
+}
+
+async function doShare() {
+  const t = I18N[state.lang];
+  const code = encodeShare(state);
+  if (!code) { showCopyHint(t.copyErr, "err"); return; }
+  const url = location.origin + location.pathname + "?r=" + code;
+  const ok = await copyText(url);
+  showCopyHint(ok ? t.copyOk : t.copyErr, ok ? "ok" : "err");
+}
+
 if (shareError) {
   document.body.style.overflow = "hidden";
   $("errorModal").hidden = false;
@@ -1115,6 +1168,7 @@ if (shareError) {
     if (t[key] !== undefined) el.innerHTML = t[key];
   });
 } else {
+  $("shareBtn").onclick = doShare;
   $("fillOwnBtn").onclick = () => { location.href = location.pathname; };
   $("save").onclick = save;
   $("saveBar").onclick = save;
